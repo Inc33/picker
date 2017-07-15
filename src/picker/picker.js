@@ -19,7 +19,8 @@ export default class Picker extends EventEmitter {
 			data: [],
 			title: '',
 			selectedIndex: null,
-			showCls: 'show'
+			showCls: 'show',
+                        isEmbedded: false
 		};
 
 		extend(this.options, options);
@@ -27,7 +28,8 @@ export default class Picker extends EventEmitter {
 		this.data = this.options.data;
 		this.pickerEl = createDom(pickerTemplate({
 			data: this.data,
-			title: this.options.title
+			title: this.options.title,
+                        showPickerChoose: !this.options.isEmbedded
 		}));
 
 		document.body.appendChild(this.pickerEl);
@@ -53,6 +55,10 @@ export default class Picker extends EventEmitter {
 			}
 		}
 
+                if (this.options.isEmbedded) {
+                    this.show();
+                }
+
 		this._bindEvent();
 	}
 
@@ -61,6 +67,7 @@ export default class Picker extends EventEmitter {
 			e.preventDefault();
 		});
 
+            if (!this.options.isEmbedded) {
 		addEvent(this.confirmEl, 'click', () => {
 			this.hide();
 
@@ -90,6 +97,7 @@ export default class Picker extends EventEmitter {
 			this.hide();
 			this.trigger('picker.cancel');
 		});
+            }
 	}
 
 	_createWheel(wheelEl, i) {
@@ -101,6 +109,10 @@ export default class Picker extends EventEmitter {
 			this.wheels[index].on('scrollEnd', () => {
 				this.trigger('picker.change', index, this.wheels[index].getSelectedIndex());
 			});
+                        this.wheels[index].on('scroll', () => {
+                            debugger;
+                            this.trigger('picker.scroll', index, this.wheels[index].getSelectedIndex());
+                        });
 		})(i);
 		return this.wheels[i];
 	}
@@ -110,7 +122,9 @@ export default class Picker extends EventEmitter {
 		let showCls = this.options.showCls;
 
 		window.setTimeout(() => {
-			addClass(this.maskEl, showCls);
+                    if (!this.options.isEmbedded) {
+                        addClass(this.maskEl, showCls);
+                    }
 			addClass(this.panelEl, showCls);
 
 			if (!this.wheels) {
@@ -129,6 +143,7 @@ export default class Picker extends EventEmitter {
 	}
 
 	hide() {
+            if (!this.options.isEmbedded) {
 		let showCls = this.options.showCls;
 		removeClass(this.maskEl, showCls);
 		removeClass(this.panelEl, showCls);
@@ -139,6 +154,7 @@ export default class Picker extends EventEmitter {
 				this.wheels[i].disable();
 			}
 		}, 500);
+            }
 	}
 
 	refill(data, index) {

@@ -81,7 +81,8 @@ var data3 = [
 var picker = new Picker({
 	data: [data1, data2, data3],
 	selectedIndex: [0, 1, 2],
-	title: '我们都是小学生'
+	title: '我们都是小学生',
+        isEmbedded: true
 });
 
 picker.on('picker.select', function (selectedVal, selectedIndex) {
@@ -94,6 +95,11 @@ picker.on('picker.change', function (index, selectedIndex) {
 });
 
 picker.on('picker.valuechange', function (selectedVal, selectedIndex) {
+	console.log(selectedVal);
+	console.log(selectedIndex);
+});
+
+picker.on('picker.scroll', function (selectedVal, selectedIndex) {
 	console.log(selectedVal);
 	console.log(selectedIndex);
 });
