@@ -1,5 +1,5 @@
-import BScroll from 'better-scroll';
-import EventEmitter from '../util/eventEmitter';
+import BScroll from '../better-scroll/bscroll';
+import {EventEmitter} from '../util/eventEmitter';
 import {extend} from '../util/lang';
 import {
 	createDom,
@@ -103,14 +103,16 @@ export default class Picker extends EventEmitter {
 	_createWheel(wheelEl, i) {
 		this.wheels[i] = new BScroll(wheelEl[i], {
 			wheel: true,
-			selectedIndex: this.selectedIndex[i]
+                        rotate: 0,
+			selectedIndex: this.selectedIndex[i],
+                        probeType: 2,
+                        scrollLimitY: 40
 		});
 		((index) => {
 			this.wheels[index].on('scrollEnd', () => {
 				this.trigger('picker.change', index, this.wheels[index].getSelectedIndex());
 			});
                         this.wheels[index].on('scroll', () => {
-                            debugger;
                             this.trigger('picker.scroll', index, this.wheels[index].getSelectedIndex());
                         });
 		})(i);
